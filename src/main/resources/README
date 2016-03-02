@@ -1,0 +1,2 @@
+1.使用QueryInterceptor作为mybatis的插件
+2.当需要分页的时候，必须包含Pager参数，mybatis的sql.xml中需要使用的参数，设置到Pager的map中（dao层的方法只有一个参数，无需加@Param注解）
