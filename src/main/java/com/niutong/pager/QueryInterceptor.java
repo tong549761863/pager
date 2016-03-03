@@ -32,6 +32,8 @@ public class QueryInterceptor implements Interceptor, Serializable {
 
     protected Dialect DIALECT = new MySQLDialect();
 
+    public static final SqlParser sqlParser = new SqlParser();
+
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         if (invocation.getTarget() instanceof RoutingStatementHandler) {
@@ -79,7 +81,7 @@ public class QueryInterceptor implements Interceptor, Serializable {
 
     private void setTotalRecord(String sql, Pager pager, MappedStatement mappedStatement, Connection connection) {
         BoundSql boundSql = mappedStatement.getBoundSql(pager);
-        String countSql = this.getCountSql(sql);
+        String countSql = sqlParser.getCountSql(sql);
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         BoundSql countBoundSql = new BoundSql(mappedStatement.getConfiguration(), countSql, parameterMappings, pager);
         ParameterHandler parameterHandler = new DefaultParameterHandler(mappedStatement, pager, countBoundSql);
@@ -105,11 +107,6 @@ public class QueryInterceptor implements Interceptor, Serializable {
             }
         }
     }
-
-    private String getCountSql(String sql) {
-        return "select count(*) from (" + sql + ") t";
-    }
-
 
     @Override
     public Object plugin(Object target) {
